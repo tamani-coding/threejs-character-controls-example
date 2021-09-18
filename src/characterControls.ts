@@ -44,13 +44,10 @@ export class CharacterControls {
         if (this.currentAction != play) {
             const toPlay = this.animationsMap.get(play)
             const current = this.animationsMap.get(this.currentAction)
+
             current.fadeOut(this.fadeDuration)
-            toPlay
-                .reset()
-                .setEffectiveTimeScale(1)
-                .setEffectiveWeight(1)
-                .fadeIn(this.fadeDuration)
-                .play();
+            toPlay.reset().fadeIn(this.fadeDuration).play();
+            
             this.currentAction = play
         }
 
