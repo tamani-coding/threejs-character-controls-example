@@ -1,12 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { A, D, DIRECTIONS, S, W } from './utils'
 
-
-const w = 'w'
-const a = 'a'
-const s = 's'
-const d = 'd'
-const directions = [w, a, s, d]
 
 export class CharacterControls {
 
@@ -41,7 +36,7 @@ export class CharacterControls {
     }
 
     public update(delta: number, keysPressed: any, camera: THREE.Camera, orbitControl: OrbitControls) {
-        const directionPressed = directions.some(key => keysPressed[key] == true)
+        const directionPressed = DIRECTIONS.some(key => keysPressed[key] == true)
 
         var play = '';
         if (directionPressed && this.toggleRun) {
@@ -95,23 +90,23 @@ export class CharacterControls {
     private directionOffset(keysPressed: any) {
         var directionOffset = 0 // w
 
-        if (keysPressed[w]) {
-            if (keysPressed[a]) {
+        if (keysPressed[W]) {
+            if (keysPressed[A]) {
                 directionOffset = Math.PI / 4 // w+a
-            } else if (keysPressed[d]) {
+            } else if (keysPressed[D]) {
                 directionOffset = - Math.PI / 4 // w+d
             }
-        } else if (keysPressed[s]) {
-            if (keysPressed[a]) {
+        } else if (keysPressed[S]) {
+            if (keysPressed[A]) {
                 directionOffset = Math.PI / 4 + Math.PI / 2 // s+a
-            } else if (keysPressed[d]) {
+            } else if (keysPressed[D]) {
                 directionOffset = -Math.PI / 4 - Math.PI / 2 // s+d
             } else {
                 directionOffset = Math.PI // s
             }
-        } else if (keysPressed[a]) {
+        } else if (keysPressed[A]) {
             directionOffset = Math.PI / 2 // a
-        } else if (keysPressed[d]) {
+        } else if (keysPressed[D]) {
             directionOffset = - Math.PI / 2 // d
         }
 

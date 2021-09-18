@@ -29,17 +29,15 @@ orbitControls.enablePan = false
 orbitControls.maxPolarAngle = Math.PI / 2 - 0.05
 orbitControls.update();
 
-// AMBIENT LIGHT
-scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-directionalLight()
+// LIGHTS
+light()
 
 // FLOOR
 generateFloor()
 
 // MODEL WITH ANIMATIONS
 var characterControls: CharacterControls
-const loader = new GLTFLoader()
-loader.load('models/Soldier.glb', function (gltf) {
+new GLTFLoader().load('models/Soldier.glb', function (gltf) {
     const model = gltf.scene;
     model.traverse(function (object: any) {
         if (object.isMesh) object.castShadow = true;
@@ -131,8 +129,10 @@ function generateFloor() {
     }
 }
 
-function directionalLight() {
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+function light() {
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7))
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1)
     dirLight.position.set(- 60, 100, - 10);
     dirLight.castShadow = true;
     dirLight.shadow.camera.top = 50;
