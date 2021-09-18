@@ -1,3 +1,4 @@
+import { CharacterControls } from './characterControls';
 import * as THREE from 'three'
 import { CameraHelper } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -20,10 +21,10 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true
 
 // CONTROLS
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true
-controls.target = new THREE.Vector3(0, 0, 0);
-controls.update();
+const orbitControls = new OrbitControls(camera, renderer.domElement);
+orbitControls.enableDamping = true
+orbitControls.target = new THREE.Vector3(0, 0, 0);
+orbitControls.update();
 
 // AMBIENT LIGHT
 scene.add(new THREE.AmbientLight(0xffffff, 0.7));
@@ -32,38 +33,47 @@ directionalLight()
 // FLOOR
 generateFloor()
 
+// MODEL WITH ANIMATIONS
+var characterControls: CharacterControls
+const loader = new GLTFLoader()
+loader.load('models/Soldier.glb', function (gltf) {
+    const model = gltf.scene;
+    model.traverse(function (object: any) {
+        if (object.isMesh) object.castShadow = true;
+    });
+    scene.add(model);
 
-var model: THREE.Group
-var mixer: THREE.AnimationMixer
-var animationsMap: Map<string, THREE.AnimationAction> = new Map() // Walk, Run, Idle
-
-const loader = new GLTFLoader();
-loader.load( 'models/Soldier.glb', function ( gltf ) {
-    model = gltf.scene;
-    model.traverse( function ( object: any ) {
-        if ( object.isMesh ) object.castShadow = true;
-    } );
-    scene.add( model );
-
+    const animationsMap: Map<string, THREE.AnimationAction> = new Map()
     const gltfAnimations = gltf.animations;
-    mixer = new THREE.AnimationMixer( model );
-    gltfAnimations.forEach( (a: THREE.AnimationClip) => {
+    const mixer = new THREE.AnimationMixer(model);
+    gltfAnimations.filter(a => a.name != 'TPose').forEach((a: THREE.AnimationClip) => {
         animationsMap.set(a.name, mixer.clipAction(a))
     })
 
-    animationsMap.get('Idle')?.play()
-} );
+    characterControls = new CharacterControls(model, mixer, animationsMap, 'Idle')
+});
+
+// CONTROL KEYS
+const keysPressed = {  }
+document.addEventListener('keydown', (event) => {
+    if (event.shiftKey && characterControls) {
+        characterControls.switchRunToggle()
+    } else {
+        (keysPressed as any)[event.key.toLowerCase()] = true
+    }
+}, false);
+document.addEventListener('keyup', (event) => {
+    (keysPressed as any)[event.key.toLowerCase()] = false
+}, false);
 
 const clock = new THREE.Clock();
 // ANIMATE
 function animate() {
     let mixerUpdateDelta = clock.getDelta();
-
-    if (mixer) {
-        mixer.update( mixerUpdateDelta );
+    if (characterControls) {
+        characterControls.update(mixerUpdateDelta, keysPressed);
     }
-
-    controls.update()
+    orbitControls.update()
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
@@ -114,9 +124,9 @@ function generateFloor() {
     }
 }
 
-function directionalLight () {
-    const dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
-    dirLight.position.set( - 60, 100, - 10 );
+function directionalLight() {
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(- 60, 100, - 10);
     dirLight.castShadow = true;
     dirLight.shadow.camera.top = 50;
     dirLight.shadow.camera.bottom = - 50;
@@ -126,6 +136,6 @@ function directionalLight () {
     dirLight.shadow.camera.far = 200;
     dirLight.shadow.mapSize.width = 4096;
     dirLight.shadow.mapSize.height = 4096;
-    scene.add( dirLight );
+    scene.add(dirLight);
     // scene.add( new THREE.CameraHelper(dirLight.shadow.camera))
 }
