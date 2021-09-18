@@ -1,3 +1,4 @@
+import { KeyDisplay } from './utils';
 import { CharacterControls } from './characterControls';
 import * as THREE from 'three'
 import { CameraHelper } from 'three';
@@ -57,7 +58,9 @@ loader.load('models/Soldier.glb', function (gltf) {
 
 // CONTROL KEYS
 const keysPressed = {  }
+const keyDispalyQueue = new KeyDisplay();
 document.addEventListener('keydown', (event) => {
+    keyDispalyQueue.down(event.key)
     if (event.shiftKey && characterControls) {
         characterControls.switchRunToggle()
     } else {
@@ -65,6 +68,7 @@ document.addEventListener('keydown', (event) => {
     }
 }, false);
 document.addEventListener('keyup', (event) => {
+    keyDispalyQueue.up(event.key);
     (keysPressed as any)[event.key.toLowerCase()] = false
 }, false);
 
