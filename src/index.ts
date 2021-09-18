@@ -58,9 +58,9 @@ loader.load('models/Soldier.glb', function (gltf) {
 
 // CONTROL KEYS
 const keysPressed = {  }
-const keyDispalyQueue = new KeyDisplay();
+const keyDisplayQueue = new KeyDisplay();
 document.addEventListener('keydown', (event) => {
-    keyDispalyQueue.down(event.key)
+    keyDisplayQueue.down(event.key)
     if (event.shiftKey && characterControls) {
         characterControls.switchRunToggle()
     } else {
@@ -68,7 +68,7 @@ document.addEventListener('keydown', (event) => {
     }
 }, false);
 document.addEventListener('keyup', (event) => {
-    keyDispalyQueue.up(event.key);
+    keyDisplayQueue.up(event.key);
     (keysPressed as any)[event.key.toLowerCase()] = false
 }, false);
 
@@ -91,7 +91,7 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    keyDispalyQueue.updatePosition()
+    keyDisplayQueue.updatePosition()
 }
 window.addEventListener('resize', onWindowResize);
 
