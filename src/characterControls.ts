@@ -8,18 +8,28 @@ export class CharacterControls {
     model: THREE.Group
     mixer: THREE.AnimationMixer
     animationsMap: Map<string, THREE.AnimationAction> = new Map() // Walk, Run, Idle
+    orbitControl: OrbitControls
+    camera: THREE.Camera
+
+    // state
     toggleRun: boolean = true
     currentAction: string
-
-    fadeDuration: number = 0.2
+    
+    // temporary data
     walkDirection = new THREE.Vector3()
     rotateAngle = new THREE.Vector3(0, 1, 0)
     rotateQuarternion: THREE.Quaternion = new THREE.Quaternion()
-
+    cameraTarget = new THREE.Vector3()
+    
+    // constants
+    fadeDuration: number = 0.2
     runVelocity = 5
     walkVelocity = 2
 
-    constructor(model: THREE.Group, mixer: THREE.AnimationMixer, animationsMap: Map<string, THREE.AnimationAction>, currentAction: string) {
+    constructor(model: THREE.Group,
+        mixer: THREE.AnimationMixer, animationsMap: Map<string, THREE.AnimationAction>,
+        orbitControl: OrbitControls, camera: THREE.Camera,
+        currentAction: string) {
         this.model = model
         this.mixer = mixer
         this.animationsMap = animationsMap
@@ -29,13 +39,23 @@ export class CharacterControls {
                 value.play()
             }
         })
+        this.orbitControl = orbitControl
+        this.camera = camera
+        this.updateCameraTarget()
     }
 
     public switchRunToggle() {
         this.toggleRun = !this.toggleRun
     }
 
-    public update(delta: number, keysPressed: any, camera: THREE.Camera, orbitControl: OrbitControls) {
+    private updateCameraTarget() {
+        this.cameraTarget.x = this.model.position.x
+        this.cameraTarget.y = this.model.position.y + 1
+        this.cameraTarget.z = this.model.position.z
+        this.orbitControl.target = this.cameraTarget
+    }
+
+    public update(delta: number, keysPressed: any) {
         const directionPressed = DIRECTIONS.some(key => keysPressed[key] == true)
 
         var play = '';
@@ -61,7 +81,9 @@ export class CharacterControls {
 
         if (this.currentAction == 'Run' || this.currentAction == 'Walk') {
             // calculate towards camera direction
-            var angleYCameraDirection = Math.atan2((camera.position.x - this.model.position.x), (camera.position.z - this.model.position.z))
+            var angleYCameraDirection = Math.atan2(
+                    (this.camera.position.x - this.model.position.x), 
+                    (this.camera.position.z - this.model.position.z))
             // diagonal movement angle offset
             var directionOffset = this.directionOffset(keysPressed)
 
@@ -70,7 +92,7 @@ export class CharacterControls {
             this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2)
 
             // calculate direction
-            camera.getWorldDirection(this.walkDirection)
+            this.camera.getWorldDirection(this.walkDirection)
             this.walkDirection.y = 0
             this.walkDirection.normalize()
             this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset)
@@ -81,9 +103,9 @@ export class CharacterControls {
             // move model & camera
             this.model.position.x += this.walkDirection.x * velocity * delta
             this.model.position.z += this.walkDirection.z * velocity * delta
-            camera.position.x += this.walkDirection.x * velocity * delta
-            camera.position.z += this.walkDirection.z * velocity * delta
-            orbitControl.target = this.model.position
+            this.camera.position.x += this.walkDirection.x * velocity * delta
+            this.camera.position.z += this.walkDirection.z * velocity * delta
+            this.updateCameraTarget()
         }
     }
 

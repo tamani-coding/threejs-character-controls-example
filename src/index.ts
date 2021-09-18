@@ -51,7 +51,7 @@ new GLTFLoader().load('models/Soldier.glb', function (gltf) {
         animationsMap.set(a.name, mixer.clipAction(a))
     })
 
-    characterControls = new CharacterControls(model, mixer, animationsMap, 'Idle')
+    characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera,  'Idle')
 });
 
 // CONTROL KEYS
@@ -75,7 +75,7 @@ const clock = new THREE.Clock();
 function animate() {
     let mixerUpdateDelta = clock.getDelta();
     if (characterControls) {
-        characterControls.update(mixerUpdateDelta, keysPressed, camera, orbitControls);
+        characterControls.update(mixerUpdateDelta, keysPressed);
     }
     orbitControls.update()
     renderer.render(scene, camera);
