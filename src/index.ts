@@ -23,7 +23,7 @@ renderer.shadowMap.enabled = true
 // CONTROLS
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 orbitControls.enableDamping = true
-orbitControls.target = new THREE.Vector3(0, 0, 0);
+orbitControls.minDistance = 5
 orbitControls.update();
 
 // AMBIENT LIGHT
@@ -71,7 +71,7 @@ const clock = new THREE.Clock();
 function animate() {
     let mixerUpdateDelta = clock.getDelta();
     if (characterControls) {
-        characterControls.update(mixerUpdateDelta, keysPressed);
+        characterControls.update(mixerUpdateDelta, keysPressed, camera, orbitControls);
     }
     orbitControls.update()
     renderer.render(scene, camera);
@@ -99,8 +99,8 @@ function generateFloor() {
 
     const WIDTH = 4
     const LENGTH = 4
-    const NUM_X = 10
-    const NUM_Z = 10
+    const NUM_X = 15
+    const NUM_Z = 15
 
     const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, 512, 512);
     const material = new THREE.MeshStandardMaterial(
