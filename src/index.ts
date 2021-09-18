@@ -33,36 +33,36 @@ directionalLight()
 generateFloor()
 
 
+var model: THREE.Group
+var mixer: THREE.AnimationMixer
+var animationsMap: Map<string, THREE.AnimationAction> = new Map() // Walk, Run, Idle
+
 const loader = new GLTFLoader();
 loader.load( 'models/Soldier.glb', function ( gltf ) {
-
-    const model = gltf.scene;
+    model = gltf.scene;
+    model.traverse( function ( object: any ) {
+        if ( object.isMesh ) object.castShadow = true;
+    } );
     scene.add( model );
 
-    model.traverse( function ( object: any ) {
+    const gltfAnimations = gltf.animations;
+    mixer = new THREE.AnimationMixer( model );
+    gltfAnimations.forEach( (a: THREE.AnimationClip) => {
+        animationsMap.set(a.name, mixer.clipAction(a))
+    })
 
-        if ( object.isMesh ) object.castShadow = true;
-
-    } );
-
-    //
-
-    const skeleton = new THREE.SkeletonHelper( model );
-    skeleton.visible = false;
-    scene.add( skeleton );
-
-
-
-    //
-
-    const animations = gltf.animations;
-
-    const mixer = new THREE.AnimationMixer( model );
-
+    animationsMap.get('Idle')?.play()
 } );
 
+const clock = new THREE.Clock();
 // ANIMATE
 function animate() {
+    let mixerUpdateDelta = clock.getDelta();
+
+    if (mixer) {
+        mixer.update( mixerUpdateDelta );
+    }
+
     controls.update()
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
