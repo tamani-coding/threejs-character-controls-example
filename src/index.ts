@@ -96,7 +96,7 @@ window.addEventListener('resize', onWindowResize);
 function generateFloor() {
     // TEXTURES
     const textureLoader = new THREE.TextureLoader();
-
+    const placeholder = textureLoader.load("./textures/placeholder/placeholder.png");
     const sandBaseColor = textureLoader.load("./textures/sand/Sand 002_COLOR.jpg");
     const sandNormalMap = textureLoader.load("./textures/sand/Sand 002_NRM.jpg");
     const sandHeightMap = textureLoader.load("./textures/sand/Sand 002_DISP.jpg");
@@ -114,6 +114,7 @@ function generateFloor() {
             displacementMap: sandHeightMap, displacementScale: 0.1,
             aoMap: sandAmbientOcclusion
         })
+    // const material = new THREE.MeshPhongMaterial({ map: placeholder})
 
     for (let i = 0; i < NUM_X; i++) {
         for (let j = 0; j < NUM_Z; j++) {
