@@ -17,8 +17,9 @@ export class CharacterControls {
     currentAction: string
 
     fadeDuration: number = 0.2
-    walkDirection = new THREE.Vector3(); 
-    rotateAngle = new THREE.Vector3(0,1,0); 
+    walkDirection = new THREE.Vector3()
+    rotateAngle = new THREE.Vector3(0,1,0)
+    rotateQuarternion: THREE.Quaternion = new THREE.Quaternion()
 
     runVelocity = 5
     walkVelocity = 2
@@ -64,11 +65,14 @@ export class CharacterControls {
         this.mixer.update(delta)
 
         if (this.currentAction == 'Run' || this.currentAction == 'Walk') {
-            var angleYCameraToModel = Math.atan2( ( camera.position.x - this.model.position.x ), ( camera.position.z - this.model.position.z ) )
+            // calculate towards camera direction
+            var angleYCameraDirection = Math.atan2( ( camera.position.x - this.model.position.x ), ( camera.position.z - this.model.position.z ) )
+            // diagonal movement angle offset
             var directionOffset = this.directionOffset(keysPressed)
 
             // rotate model
-            this.model.rotation.y = angleYCameraToModel + directionOffset
+            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset)
+            this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.1)
 
             // calculate direction
             camera.getWorldDirection(this.walkDirection)
