@@ -23,21 +23,25 @@ export class KeyDisplay {
             v.textContent = k
         })
 
-        w.style.top = `${window.innerHeight - 150}px`
-        a.style.top = `${window.innerHeight - 100}px`
-        s.style.top = `${window.innerHeight - 100}px`
-        d.style.top = `${window.innerHeight - 100}px`
-        shift.style.top = `${window.innerHeight - 100}px`
-
-        w.style.left = `${300}px`
-        a.style.left = `${200}px`
-        s.style.left = `${300}px`
-        d.style.left = `${400}px`
-        shift.style.left = `${50}px`
+        this.updatePosition()
 
         this.map.forEach( (v, _) => {
             document.body.append(v)
         })
+    }
+
+    public updatePosition() {
+        this.map.get('w').style.top = `${window.innerHeight - 150}px`
+        this.map.get('a').style.top = `${window.innerHeight - 100}px`
+        this.map.get('s').style.top = `${window.innerHeight - 100}px`
+        this.map.get('d').style.top = `${window.innerHeight - 100}px`
+        this.map.get('shift').style.top = `${window.innerHeight - 100}px`
+
+        this.map.get('w').style.left = `${300}px`
+        this.map.get('a').style.left = `${200}px`
+        this.map.get('s').style.left = `${300}px`
+        this.map.get('d').style.left = `${400}px`
+        this.map.get('shift').style.left = `${50}px`
     }
 
     public down (key: string) {
