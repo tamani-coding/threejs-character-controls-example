@@ -6,7 +6,7 @@ const w = 'w'
 const a = 'a'
 const s = 's'
 const d = 'd'
-const directions = [w,a,s,d]
+const directions = [w, a, s, d]
 
 export class CharacterControls {
 
@@ -18,7 +18,7 @@ export class CharacterControls {
 
     fadeDuration: number = 0.2
     walkDirection = new THREE.Vector3()
-    rotateAngle = new THREE.Vector3(0,1,0)
+    rotateAngle = new THREE.Vector3(0, 1, 0)
     rotateQuarternion: THREE.Quaternion = new THREE.Quaternion()
 
     runVelocity = 5
@@ -66,7 +66,7 @@ export class CharacterControls {
 
         if (this.currentAction == 'Run' || this.currentAction == 'Walk') {
             // calculate towards camera direction
-            var angleYCameraDirection = Math.atan2( ( camera.position.x - this.model.position.x ), ( camera.position.z - this.model.position.z ) )
+            var angleYCameraDirection = Math.atan2((camera.position.x - this.model.position.x), (camera.position.z - this.model.position.z))
             // diagonal movement angle offset
             var directionOffset = this.directionOffset(keysPressed)
 
@@ -93,26 +93,28 @@ export class CharacterControls {
     }
 
     private directionOffset(keysPressed: any) {
-        var directionOffset = 0
+        var directionOffset = 0 // w
+
         if (keysPressed[w]) {
             if (keysPressed[a]) {
-                directionOffset = Math.PI / 4
+                directionOffset = Math.PI / 4 // w+a
             } else if (keysPressed[d]) {
-                directionOffset = -Math.PI / 4
+                directionOffset = - Math.PI / 4 // w+d
             }
         } else if (keysPressed[s]) {
             if (keysPressed[a]) {
-                directionOffset = Math.PI / 4 + Math.PI / 2
+                directionOffset = Math.PI / 4 + Math.PI / 2 // s+a
             } else if (keysPressed[d]) {
-                directionOffset = -Math.PI / 4 - Math.PI / 2
+                directionOffset = -Math.PI / 4 - Math.PI / 2 // s+d
             } else {
-                directionOffset = Math.PI
+                directionOffset = Math.PI // s
             }
         } else if (keysPressed[a]) {
-            directionOffset = Math.PI / 2
+            directionOffset = Math.PI / 2 // a
         } else if (keysPressed[d]) {
-            directionOffset = -Math.PI / 2
+            directionOffset = - Math.PI / 2 // d
         }
+
         return directionOffset
     }
 }
