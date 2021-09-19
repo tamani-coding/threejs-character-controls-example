@@ -45,9 +45,9 @@ new GLTFLoader().load('models/Soldier.glb', function (gltf) {
     });
     scene.add(model);
 
-    const animationsMap: Map<string, THREE.AnimationAction> = new Map()
-    const gltfAnimations = gltf.animations;
+    const gltfAnimations: THREE.AnimationClip[] = gltf.animations;
     const mixer = new THREE.AnimationMixer(model);
+    const animationsMap: Map<string, THREE.AnimationAction> = new Map()
     gltfAnimations.filter(a => a.name != 'TPose').forEach((a: THREE.AnimationClip) => {
         animationsMap.set(a.name, mixer.clipAction(a))
     })
