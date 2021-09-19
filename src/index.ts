@@ -25,6 +25,7 @@ renderer.shadowMap.enabled = true
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 orbitControls.enableDamping = true
 orbitControls.minDistance = 5
+orbitControls.maxDistance = 15
 orbitControls.enablePan = false
 orbitControls.maxPolarAngle = Math.PI / 2 - 0.05
 orbitControls.update();

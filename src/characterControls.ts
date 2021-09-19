@@ -41,18 +41,11 @@ export class CharacterControls {
         })
         this.orbitControl = orbitControl
         this.camera = camera
-        this.updateCameraTarget()
+        this.updateCameraTarget(0,0)
     }
 
     public switchRunToggle() {
         this.toggleRun = !this.toggleRun
-    }
-
-    private updateCameraTarget() {
-        this.cameraTarget.x = this.model.position.x
-        this.cameraTarget.y = this.model.position.y + 1
-        this.cameraTarget.z = this.model.position.z
-        this.orbitControl.target = this.cameraTarget
     }
 
     public update(delta: number, keysPressed: any) {
@@ -101,12 +94,24 @@ export class CharacterControls {
             const velocity = this.currentAction == 'Run' ? this.runVelocity : this.walkVelocity
 
             // move model & camera
-            this.model.position.x += this.walkDirection.x * velocity * delta
-            this.model.position.z += this.walkDirection.z * velocity * delta
-            this.camera.position.x += this.walkDirection.x * velocity * delta
-            this.camera.position.z += this.walkDirection.z * velocity * delta
-            this.updateCameraTarget()
+            const moveX = this.walkDirection.x * velocity * delta
+            const moveZ = this.walkDirection.z * velocity * delta
+            this.model.position.x += moveX
+            this.model.position.z += moveZ
+            this.updateCameraTarget(moveX, moveZ)
         }
+    }
+
+    private updateCameraTarget(moveX: number, moveZ: number) {
+        // move camera
+        this.camera.position.x += moveX
+        this.camera.position.z += moveZ
+
+        // update camera target
+        this.cameraTarget.x = this.model.position.x
+        this.cameraTarget.y = this.model.position.y + 1
+        this.cameraTarget.z = this.model.position.z
+        this.orbitControl.target = this.cameraTarget
     }
 
     private directionOffset(keysPressed: any) {
