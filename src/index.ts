@@ -103,10 +103,8 @@ function generateFloor() {
     const sandHeightMap = textureLoader.load("./textures/sand/Sand 002_DISP.jpg");
     const sandAmbientOcclusion = textureLoader.load("./textures/sand/Sand 002_OCC.jpg");
 
-    const WIDTH = 4
-    const LENGTH = 4
-    const NUM_X = 15
-    const NUM_Z = 15
+    const WIDTH = 80
+    const LENGTH = 80
 
     const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, 512, 512);
     const material = new THREE.MeshStandardMaterial(
@@ -115,20 +113,21 @@ function generateFloor() {
             displacementMap: sandHeightMap, displacementScale: 0.1,
             aoMap: sandAmbientOcclusion
         })
+    wrapAndRepeatTexture(material.map)
+    wrapAndRepeatTexture(material.normalMap)
+    wrapAndRepeatTexture(material.displacementMap)
+    wrapAndRepeatTexture(material.aoMap)
     // const material = new THREE.MeshPhongMaterial({ map: placeholder})
 
-    for (let i = 0; i < NUM_X; i++) {
-        for (let j = 0; j < NUM_Z; j++) {
-            const floor = new THREE.Mesh(geometry, material)
-            floor.receiveShadow = true
-            floor.rotation.x = - Math.PI / 2
+    const floor = new THREE.Mesh(geometry, material)
+    floor.receiveShadow = true
+    floor.rotation.x = - Math.PI / 2
+    scene.add(floor)
+}
 
-            floor.position.x = i * WIDTH - (NUM_X / 2) * WIDTH
-            floor.position.z = j * LENGTH - (NUM_Z / 2) * LENGTH
-
-            scene.add(floor)
-        }
-    }
+function wrapAndRepeatTexture (map: THREE.Texture) {
+    map.wrapS = map.wrapT = THREE.RepeatWrapping
+    map.repeat.x = map.repeat.y = 10
 }
 
 function light() {
