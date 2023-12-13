@@ -23,6 +23,6 @@ module.exports = {
     path: src
   },
   devServer: {
-    contentBase: src,
+    static: src,
   },
 }
